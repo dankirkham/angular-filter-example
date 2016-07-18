@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+  <head lang="en">
+    <meta charset="utf-8">
+    <title>Dan's SAM List</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <script src="js/angular.min.js"></script>
+    <script src="js/app.js"></script>
+  </head>
+
+  <body ng-app="MissileListApp" ng-controller="MissileListControl">
+    <div class="navbar navbar-default navbar-static-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <span>
+            <img alt="Brand" src="img/logo.png">
+          </span>
+          Dan's SAM List
+        </a>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-2">
+          <form class="form" role="form">
+            <div class="panel panel-default">
+              <div class="panel-heading">Filter</div>
+              <div class="panel-body">
+                <div class="form-group has-feedback">
+                  <input type="text" class="form-control" placeholder="Filter results for..." ng-model="filterText"/>
+                  <i class="glyphicon glyphicon-search form-control-feedback"></i>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Sort by</label>
+                  <select ng-model="sort">
+                    <option value="id">ID #</option>
+                    <option value="dod_name">DOD Name</option>
+                    <option value="nato_name">Nato Name</option>
+                    <option value="ioc_year">IOC Year (circa)</option>
+                  </select>
+                </div>
+                <div class="form-group" ng-repeat="(prop, title) in { 'country':'Country', 'manpads':'MANPADS', 'ir_tracking':'IR Tracking', 'command_guidance':'Command Guidance', 'homing_guidance':'Homing Guidance' }" ng-init="filter[prop] = {}">
+                  <label class="control-label">{{title}}</label></br>
+                  <ul>
+                    <li ng-repeat="option in getOptionsFor(prop)">
+                      <input type="checkbox" ng-model="filter[prop][option]" ng-init="filter[prop][option]=true" />&nbsp;{{option}}
+                    </li>
+                  <ul>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">Display</div>
+              <div class="panel-body">
+                <div class="checkbox" ng-repeat="heading in headings">
+                  <label><input type="checkbox" ng-click="heading.selected = !heading.selected" ng-checked="heading.selected" >{{heading.title}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">About</div>
+              <div class="panel-body">
+                <p>Created by Dan Kirkham</p>
+                <p>Using Bootstrap and AngularJS</p>
+                <p>Missile icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> and is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></p>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-lg-10">
+          <div class="panel panel-default">
+            <div class="panel-heading">List of {{( missiles | filter:filterByProperty | filter:filterText ).length}} Missile(s)</div>
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th ng-repeat="heading in headings" ng-show="heading.selected">{{heading.title}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="missile in missiles | filter:filterByProperty | filter:filterText | orderBy:sort">
+                  <td ng-repeat="heading in headings" ng-show="heading.selected">{{missile[heading.filter]}}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>
